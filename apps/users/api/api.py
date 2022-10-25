@@ -13,5 +13,13 @@ def user_api_view(request):
         return Response(users_serializer.data)
 
     elif request.method=='POST':
-        #Toda la información que se envie por el método POST estará guardada en request.data
-        print(request.data)
+        #El serializador realiza un proceso de validación de los campos del objeto con la información enviada por POST y contenida en 'request.data'
+        user_serializer = UserSerializer(data = request.data)   
+        
+        if user_serializer.is_valid():
+            '''Si pasa la validación, se genera el registro del usuario en la BD y se guarda la info en 'user_serializer.data' '''
+            user_serializer.save()
+            return Response(user_serializer.data)
+        
+        return Response(user_serializer.errors) 
+        '''Si no pasa la validación los errores se guardan en 'user_serializer.errors' '''
