@@ -23,3 +23,28 @@ def user_api_view(request):
         
         return Response(user_serializer.errors) 
         '''Si no pasa la validación los errores se guardan en 'user_serializer.errors' '''
+
+@api_view(['GET','PUT','DELETE'])
+def user_detail_api_view(request,pk=None):
+
+    if request.method == 'GET':
+        user = User.objects.filter(id=pk).first() 
+        user_serializer = UserSerializer(user)
+        return Response(user_serializer.data)
+    
+    elif request.method == 'PUT':
+        user = User.objects.filter(id=pk).first() 
+        user_serializer= UserSerializer(user,data = request.data) 
+        '''Al colocar 'data = request.data' le estamos pasando al serializador la información nueva que se debe actualizar '''
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response(user_serializer.data)
+        
+        return Response(user_serializer.errors) 
+    
+    elif request.method == 'DELETE':
+        user = User.objects.filter(id=pk).first() 
+        user.delete()
+        return Response("Eliminado") 
+
+
